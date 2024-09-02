@@ -1,6 +1,9 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
 
 import 'nav_bar.dart';
 
@@ -15,6 +18,12 @@ class HomeScreen extends StatefulWidget {
 
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  late final WebViewController _controller;
+
+  var url = 'https://www.prothomalo.com/';
+
+  WebViewController controller = WebViewController();
 
   //bool shouldPop = true;
   Future<bool> _onBackButtonPress() async {
@@ -37,20 +46,100 @@ class _HomeScreenState extends State<HomeScreen> {
     )) ?? false;
   }
 
+  // WebViewController controller = WebViewController()
+  //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
+  //   ..setNavigationDelegate(
+  //     NavigationDelegate(
+  //       onProgress: (int progress) {
+  //         // Update loading bar.
+  //       },
+  //       onPageStarted: (String url) {},
+  //       onPageFinished: (String url) {},
+  //       onHttpError: (HttpResponseError error) {},
+  //       onWebResourceError: (WebResourceError error) {},
+  //       onNavigationRequest: (NavigationRequest request) {
+  //         if (request.url.startsWith('https://www.youtube.com/')) {
+  //           return NavigationDecision.prevent;
+  //         }
+  //         return NavigationDecision.navigate;
+  //       },
+  //     ),
+  //   )
+  //   ..loadRequest(Uri.parse('https://prachurja.com'));
+
+
+  ///============================================================ initState =======================================================///
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onHttpError: (HttpResponseError error) {},
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.startsWith('https://prachurja.com')) {
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse('https://prachurja.com'));
+
+    // _controller = WebViewController()..loadRequest(Uri.parse(url));
+    // _controller..setNavigationDelegate(
+    //  NavigationDelegate(
+    //    onPageStarted: (url) {
+    //      setState(() {
+    //
+    //      });
+    //    }
+    //    onProgress:
+    //  )
+    // )
+
+
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackButtonPress,
-      child: Scaffold(
-          drawer: NavBar(),
-          appBar: AppBar(
-            title: Text('Go Together'),
-            centerTitle: true,
-          ),
-          body: Center(
-            child: Text('Welcome to Home Screen'),
-          ),
-        ),
+
+    return Scaffold(
+      //appBar: AppBar(title: const Text('Flutter Simple Example')),
+      body: SafeArea(child: WebViewWidget(controller: controller),),
     );
+
+    // return WillPopScope(
+    //   onWillPop: _onBackButtonPress,
+    //   child: Scaffold(
+    //       drawer: NavBar(),
+    //       appBar: AppBar(
+    //         title: Text('Go Together'),
+    //         centerTitle: true,
+    //       ),
+    //       body: WebView(
+    //         initialUrl: 'https://flutter.dev',
+    //         javascriptMode: JavascriptMode.unrestricted,
+    //         onWebViewCreated: (WebViewController webViewController) {
+    //           _controller = webViewController;
+    //         },
+    //       )
+    //     ),
+    // );
+
+
+
   }
 }
